@@ -2,8 +2,6 @@
 
 A classical computer-vision pipeline that turns a photograph of a printed Sudoku into a 9x9 grid. The implementation follows the supplied MEF University COMP 482 Project 1 brief and keeps the required stages separate.
 
-> **Important academic note:** this repository is a substantial implementation scaffold, not evidence that the project has already achieved the rubric targets. You still need to capture your own 10+ photographs, annotate them, run the parameter study, measure performance, inspect failure cases, write conclusions supported by your results, and be able to explain and modify the code in the oral defense. The included synthetic images are only for software testing and do not satisfy the personal-dataset requirement.
-
 ## 1. Implemented features
 
 | Requirement | Implementation |
@@ -148,13 +146,7 @@ For an input called `photo.jpg`, the output directory contains:
 
 If no puzzle is found, a result JSON with `verdict: "not_found"` and a zero grid is written. In batch mode, an exception for one image is recorded in its result file and does not terminate the rest of the batch.
 
-## 5. Personal dataset and annotations
-
-Read [`data/personal/README.md`](data/personal/README.md) before collecting, and use [`SUBMISSION_CHECKLIST.md`](SUBMISSION_CHECKLIST.md) to track the required deliverables. The brief requires at least 10 original phone photographs of at least 3 different printed puzzles, all five capture conditions C1-C5, and at least three distinct C2 oblique views. Each photograph must include a handwritten card with your student number and capture date outside the Sudoku grid; preserve the original files and EXIF metadata.
-
-Create one JSON file per image with the same basename. Annotate corners as TL, TR, BR, BL in original-image pixel coordinates and provide all 81 givens. These are manual ground-truth annotations; do not reuse the predicted corners or grid as ground truth.
-
-## 5.1 Interactive personal-dataset annotation tool
+## 5 Interactive personal-dataset annotation tool
 
 After running `INSTALL.bat` once, use `ANNOTATE_DATASET.bat` (Windows) or run:
 
@@ -236,55 +228,6 @@ python diagnose_dataset.py --images data/personal/images --annotations data/pers
 ```
 
 The diagnostic script does not invent annotations. Results are only meaningful when each JSON grid and corner set has been manually checked against its original photograph. It cannot automatically verify the handwritten card, original EXIF capture, or that the puzzles came from three different sources; those still require manual confirmation.
-
-## 9. Tests and synthetic smoke input
-
-Run the automated tests:
-
-```bash
-python -m pytest -q
-python tools/generate_synthetic.py --outdir examples/synthetic --count 1
-python sudoku_scan.py --input examples/synthetic/synthetic_01.png --outdir examples/synthetic_output
-```
-
-The generated example is labelled synthetic and is **not** a valid personal photograph for course submission. It is intended to check installation and output generation.
-
-## 10. Report
-
-Start from [`report/report_template.tex`](report/report_template.tex). The report must use your own measured results and follow the required Appendix B sections. Do not fill its tables with guessed values. Include at least four genuine failure cases with debug images and explain which stage failed.
-
-## 11. Angle and batch regression fixes (10 November 2026)
-
-The reported failures were reproduced with generated perspective/rotation test images and a folder containing nested image subfolders. The following changes target those failure mechanisms:
-
-- `sudokuscan/corners.py`: widened `cornerSubPix` refinement adaptively when a Harris maximum is displaced from the proposed outer-grid junction. The proposal is still not used as the final corner; all four selected locations are Harris candidates, refined at subpixel precision.
-- `sudokuscan/pipeline.py`: retained the specified 450x450 A3/A4/H4 output images, but generated separate 900x900 OCR warps directly from the original photograph and the same transform. This preserves printed digit detail that was lost when OCR used only the 450px rectification.
-- `sudokuscan/recognition.py`: removes thin border fragments touching the edge band of the inner cell crop before emptiness classification, so dashed grid remnants are less likely to be marked as printed digits. The filter is edge-aware to avoid removing a centered digit `1`.
-- `launcher.py` and `RUN.bat`: replaced fragile batch/PowerShell path parsing with a Python file/folder picker and an argument-list subprocess call. Option 2 explicitly launches recursive batch mode with solving enabled.
-- `sudoku_scan.py`: recursive batch scanning keeps source subfolders in the output tree, writes a solver status for each image in `batch_summary.json`, continues after an unreadable file, and avoids re-reading a result tree nested in the input.
-- `evaluate.py`, `tools/parameter_sweep.py` and `tools/make_comparison_figure.py`: result/annotation matching follows nested subfolders. Confusion-crop export now follows each result's own parent folder, so same-named photographs in different subfolders are not mixed.
-
-**Controlled regression measurements (synthetic only):**
-
-| Generated test | Mean corner error / side | H4 cell accuracy | Empty-cell F1 | Runtime |
-|---|---:|---:|---:|---:|
-| 30-degree in-plane rotation | 0.573% | 100% | 1.000 | 3.68 s |
-| Strong keystone warp | 0.214% | 100% | 1.000 | 8.14 s |
-| Extreme keystone warp | 0.546% | 100% | 1.000 | 8.41 s |
-
-These are generated transforms of the same synthetic board. They are targeted regression checks, not measurements of real photographs or a guarantee for the hidden grader.
-
-## 12. Important implementation limitations to verify
-
-1. Automatic corner selection is heuristic. Clutter, broken grid borders, very low contrast, nearby rectangles and extreme perspective can produce false proposals. The hidden-test set is not available here; robustness must be measured on your data and tuned accordingly.
-2. Tesseract quality depends on the installed language/data package, printer font, image sharpness and the cell threshold. The empty-cell threshold and 15% margin are starting choices that must be justified with your examples.
-3. The included OCR statistics compare raw/prepared recognition rates, not ground-truth accuracy. Use `evaluate.py` and your annotations to compute true accuracy and confusions.
-4. The grid-line projection metric searches near ideal 50-pixel locations; it is a diagnostic, not a substitute for detailed analysis of all detected line positions.
-5. The synthetic tests are not a substitute for hidden-test or personal-dataset evidence.
-
-## 13. Academic integrity and oral defense
-
-The supplied assignment permits AI assistance only when disclosed. See [`AI_USE_DISCLOSURE.md`](AI_USE_DISCLOSURE.md). You are responsible for editing the disclosure so it precisely reflects your actual use. Read [`docs/ORAL_DEFENSE.md`](docs/ORAL_DEFENSE.md) and practice modifying the code without AI. A submission you cannot explain or change during the defense risks a severe authenticity penalty.
 
 
 ### OpenCV 4/5 HoughLinesP compatibility
