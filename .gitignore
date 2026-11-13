@@ -1,0 +1,19 @@
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+.env
+*.py[cod]
+.DS_Store
+.idea/
+.vscode/
+data/
+out/
+results/
+examples/synthetic_output/
+report/metrics/
+report/parameter_sweep.csv
+# Personal photos contain the handwritten student-number card. Keep them out
+# of accidental source-control uploads; submit the required dataset separately.
+data/personal/*
+!data/personal/README.md

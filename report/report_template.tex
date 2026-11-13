@@ -1,0 +1,114 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{array}
+\usepackage{tabularx}
+\title{SudokuScan: From a Photograph of a Printed Puzzle to a Digital 9$\times$9 Grid}
+\author{\IEEEauthorblockN{[Your Name]}\IEEEauthorblockA{Department of Computer Engineering\\MEF University\\Student no.: [Student Number]}}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+[Write a concise summary using your actual personal-dataset results. Do not claim accuracy or robustness before measuring it.]
+\end{abstract}
+
+\section{Introduction}
+[Problem, challenges, approach, dataset summary and measured headline results.]
+
+\section{Corner Detection}
+\subsection{Harris Parameters and Candidate Suppression}
+[Give blockSize, ksize, k, response threshold and NMS radius. Explain their roles.]
+\subsection{Automatic Outer-Corner Selection}
+[Explain region proposals, how selected coordinates are guaranteed to originate from Harris candidates, candidate scoring and sub-pixel refinement.]
+\subsection{Parameter Study}
+[Insert a table/plot from at least six personal images. Include candidate counts and corner errors for the tested settings.]
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/harris_parameter_study.png}
+\caption{Harris parameter study. Replace this placeholder with your measured plot.}
+\end{figure}
+\subsection{Failure Cases}
+[Discuss clutter, shadows, rotation, partial borders and other observed failures.]
+
+\section{Rectification}
+\subsection{Affine and Projective Models}
+[Explain A3, A4 and H4 and their degrees of freedom.]
+\subsection{Residuals}
+[Report A3 unused-BR error, A4 four-corner RMS residual and H4 mapping residual.]
+
+\section{Affine Versus Homography}
+[Define the obliqueness measure and show results for at least eight images, near-frontal through strongly oblique.]
+\begin{table}[t]
+\centering
+\caption{Rectification comparison on the personal dataset. Replace every placeholder with measured values.}
+\begin{tabular}{lrrrr}
+\toprule
+Image & Obliqueness & A3 error & A4 RMS & H4 RMS\\
+\midrule
+[photo 1] & [ ] & [ ] & [ ] & [ ]\\
+[photo 2] & [ ] & [ ] & [ ] & [ ]\\
+\bottomrule
+\end{tabular}
+\end{table}
+[Compare grid-line deviations and OCR cell accuracy for A3/A4/H4. Relate your evidence to weak perspective.]
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/corner_residual_vs_obliqueness.png}
+\caption{Affine and projective corner residuals against obliqueness.}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/grid_straightness_vs_obliqueness.png}
+\caption{Grid-line deviation against obliqueness.}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/ocr_accuracy_vs_obliqueness.png}
+\caption{OCR cell accuracy against obliqueness.}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/grid_spacing_vs_obliqueness.png}
+\caption{Grid-line spacing deviation against obliqueness.}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/most_oblique_rectifications.png}
+\caption{A3, A4 and H4 on the most oblique personal image.}
+\end{figure}
+
+\section{Recognition}
+\subsection{Cell Margin and Empty-Cell Decision}
+[Explain the margin and explicit ink/component threshold. Emptiness must be decided before OCR.]
+\subsection{OCR Configuration and Cell Preparation}
+[State engine/version, PSM, whitelist, binarization, component filtering, centring and upscaling. Compare raw and prepared cells using ground truth.]
+\subsection{Recognition Results}
+[Report overall cell accuracy, empty-cell F1 and most frequent digit confusions. Include representative cell crops.]
+
+\section{Results}
+[Provide corner error, cell accuracy, empty-cell F1, exact-grid match and robustness, broken down by C1-C5. Include the development set only if your course-provided annotations are available to you.]
+
+\section{Failure Analysis}
+[At least four genuine failures. For each: input crop, Harris map, debug image, failing stage, cause and a proposed correction.]
+
+\section{Conclusion and Limitations}
+[Evidence-based conclusion: when is affine sufficient, when is H4 needed, and what remains unreliable?]
+
+\appendices
+\section{AI-Use Disclosure}
+The use described below must be checked and edited to match the student's actual use. Add every other AI tool used and remove inaccurate details.
+\begin{table*}[t]
+\centering
+\caption{AI-use disclosure (Appendix C).}
+\begin{tabularx}{\textwidth}{p{2.2cm} p{2.4cm} X X}
+\toprule
+Tool & Purpose / stage & What was asked (summary) & What was kept, changed or rejected \\
+\midrule
+ChatGPT (OpenAI) & Project planning, Python implementation, code review/fixes, tests, Windows installer/launcher, documentation and optional B1-B4 & Create and then audit a project implementing the supplied COMP 482 SudokuScan specification; fix identified bugs and add one-click Windows scripts & The generated implementation and subsequent fixes are included. The student must inspect, run, understand, validate, modify and take responsibility for submitted parts. Edit this description to match actual use. \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\end{document}

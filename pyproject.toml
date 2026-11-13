@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sudokuscan-comp482"
+version = "1.1.1"
+description = "Classical computer-vision Sudoku scanner for COMP 482 Project 1"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "opencv-python>=4.8,<6",
+  "pytesseract>=0.3.10",
+  "matplotlib>=3.7",
+  "Pillow>=10.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[tool.setuptools.packages.find]
+include = ["sudokuscan*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
